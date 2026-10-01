@@ -1,0 +1,15 @@
+# Liste blanche : seuls ces éléments sont publiés sur GitHub (l'app, le README et les docs).
+# Tout le reste du dossier (spécification, fichiers personnels, exports…) reste sur l'ordinateur.
+/*
+!/.gitignore
+!/.nojekyll
+!/index.html
+!/manifest.webmanifest
+!/sw.js
+!/css/
+!/js/
+!/config/
+!/icons/
+!/docs/
+!/README.md
+.DS_Store

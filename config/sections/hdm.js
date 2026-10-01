@@ -1,0 +1,122 @@
+// SECTION 4 — Histoire de la maladie
+// Les modules (polytraumatisme, coma…) insèrent leurs questions après le groupe « hdm_debut_g ».
+export default {
+  id: "hdm",
+  titre: "Histoire de la maladie",
+  icone: "📖",
+  groupes: [
+    {
+      id: "hdm_debut_g",
+      titre: "Début",
+      si: "!motif('polytraumatisme')",
+      champs: [
+        {
+          id: "hdm_debut",
+          type: "heure",
+          label: "Début des symptômes",
+          cle: true,
+          phrase: "début de la symptomatologie {valeur}[ ({delai:hdm_debut} avant l'admission)]",
+        },
+        {
+          id: "hdm_delai",
+          type: "choix",
+          label: "… ou délai approximatif",
+          si: "vide('hdm_debut')",
+          options: [
+            { v: "1h", label: "< 1 h", texte: "début de la symptomatologie moins d'une heure avant l'admission" },
+            { v: "6h", label: "1–6 h", texte: "début de la symptomatologie 1 à 6 heures avant l'admission" },
+            { v: "24h", label: "6–24 h", texte: "début de la symptomatologie 6 à 24 heures avant l'admission" },
+            { v: "3j", label: "1–3 j", texte: "début de la symptomatologie 1 à 3 jours avant l'admission" },
+            { v: "plus", label: "> 3 j", texte: "début de la symptomatologie plus de 3 jours avant l'admission" },
+          ],
+        },
+        {
+          id: "hdm_mode",
+          type: "choix",
+          label: "Mode d'installation",
+          cle: true,
+          options: [
+            { v: "brutal", label: "Brutal", texte: "d'installation brutale" },
+            { v: "rapide", label: "Rapidement progressif", texte: "d'installation rapidement progressive" },
+            { v: "progressif", label: "Progressif", texte: "d'installation progressive" },
+          ],
+        },
+      ],
+    },
+    {
+      id: "hdm_signes_g",
+      titre: "Signes associés",
+      champs: [
+        {
+          id: "hdm_signes",
+          type: "multi",
+          label: "Signes associés",
+          autre: true,
+          phrase: "signes associés : {valeur}",
+          options: [
+            { v: "fievre", label: "Fièvre", texte: "fièvre" },
+            { v: "frissons", label: "Frissons", texte: "frissons" },
+            { v: "vomissements", label: "Vomissements", texte: "vomissements" },
+            { v: "diarrhee", label: "Diarrhée", texte: "diarrhée" },
+            { v: "cephalees", label: "Céphalées", texte: "céphalées" },
+            { v: "douleur", label: "Douleur", texte: "douleur[ {hdm_douleur_siege}]" },
+            { v: "malaise", label: "Malaise", texte: "malaise" },
+            { v: "syncope", label: "Perte de connaissance", texte: "perte de connaissance" },
+            { v: "asthenie", label: "Asthénie", texte: "asthénie" },
+          ],
+        },
+        { id: "hdm_douleur_siege", type: "texte", label: "Siège de la douleur", si: "coche('hdm_signes', 'douleur')", sortie: false },
+      ],
+    },
+    {
+      id: "hdm_recit_g",
+      titre: "Circonstances et évolution",
+      champs: [
+        { id: "hdm_circonstances", type: "texte_long", label: "Circonstances de survenue", phrase: "{valeur}", nouvelle: true },
+        { id: "hdm_evolution", type: "texte_long", label: "Évolution / chronologie", phrase: "{valeur}", nouvelle: true },
+      ],
+    },
+    {
+      id: "hdm_prehosp",
+      titre: "Prise en charge pré-hospitalière",
+      si: "dans(arrivee, 'samu', 'pc', 'ambulance', 'transfert')",
+      prefixe: "Prise en charge pré-hospitalière : ",
+      champs: [
+        {
+          id: "ph_gestes",
+          type: "multi",
+          label: "Gestes réalisés",
+          autre: true,
+          phrase: "{valeur}",
+          options: [
+            { v: "o2", label: "O2", texte: "oxygénothérapie" },
+            { v: "vvp", label: "VVP", texte: "voie veineuse périphérique" },
+            { v: "remplissage", label: "Remplissage", texte: "remplissage[ ({ph_remplissage} mL)]" },
+            { v: "collier", label: "Collier cervical", texte: "collier cervical" },
+            { v: "matelas", label: "Matelas immobilisateur", texte: "matelas immobilisateur" },
+            { v: "attelle", label: "Attelle", texte: "attelle" },
+            { v: "garrot", label: "Garrot", texte: "garrot" },
+            { v: "iot", label: "IOT", texte: "intubation orotrachéale" },
+          ],
+        },
+        { id: "ph_fc", type: "nombre", label: "FC sur place", unite: "bpm", decimales: 0, bornes: ["fc_min", "fc_max"], phrase: "FC initiale {valeur} bpm" },
+        {
+          id: "ph_pa",
+          type: "pa",
+          label: "PA sur place",
+          id_pas: "ph_pas",
+          id_pad: "ph_pad",
+          bornes_pas: ["pas_min", "pas_max"],
+          bornes_pad: [null, "pad_max"],
+          phrase: "PA initiale {valeur} mmHg",
+        },
+        { id: "ph_spo2", type: "nombre", label: "SpO2 sur place", unite: "%", decimales: 0, bornes: ["spo2_min", null], phrase: "SpO2 initiale {valeur} %" },
+        { id: "ph_gcs", type: "nombre", label: "GCS sur place", decimales: 0, min: 3, max: 15, bornes: [15, null], phrase: "GCS initial {valeur}/15" },
+        { id: "ph_gly", type: "nombre", label: "Glycémie sur place", unite: "g/L", decimales: 2, bornes: ["gly_min", "gly_max"], phrase: "glycémie capillaire initiale {valeur} g/L" },
+        { id: "ph_remplissage", type: "nombre", label: "Volume de remplissage", unite: "mL", decimales: 0, si: "coche('ph_gestes', 'remplissage')", sortie: false },
+        { id: "ph_medicaments", type: "texte", label: "Médicaments administrés", phrase: "médicaments administrés : {valeur}" },
+        { id: "ph_transport", type: "nombre", label: "Durée du transport", unite: "min", decimales: 0, phrase: "durée de transport {valeur} min" },
+      ],
+    },
+  ],
+};
